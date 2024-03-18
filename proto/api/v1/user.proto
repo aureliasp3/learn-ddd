@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/empty.proto";
+
+service UserService {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc GetUsers(google.protobuf.Empty) returns (GetUsersResponse);
+}
+
+message User {
+  int64 id = 1 [(buf.validate.field).int64.gte = 1];
+  string name = 2;
+}
+
+message GetUserRequest {
+  int64 id = 1 [(buf.validate.field).int64.gte = 1];
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message GetUsersResponse {
+  repeated User users = 1;
+}

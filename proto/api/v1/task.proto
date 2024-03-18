@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "api/v1/date.proto";
+import "api/v1/user.proto";
+import "buf/validate/validate.proto";
+import "google/protobuf/empty.proto";
+
+service TaskService {
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
+  rpc GetTasks(google.protobuf.Empty) returns (GetTasksResponse);
+  rpc SearchTasks(SearchTasksRequest) returns (SearchTasksResponse);
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+  rpc UpdateTask(UpdateTaskRequest) returns (UpdateTaskResponse);
+  rpc DeleteTask(DeleteTaskRequest) returns (google.protobuf.Empty);
+}
+
+enum TaskStatus {
+  TASK_STATUS_UNSPECIFIED = 0;
+  TASK_STATUS_OPEN = 1;
+  TASK_STATUS_IN_PROGRESS = 2;
+  TASK_STATUS_DONE = 3;
+}
+
+message Task {
+  int64 id = 1 [(buf.validate.field).int64.gte = 1];
+  string title = 2;
+  User author = 3;
+  User assignee = 4;
+  TaskStatus status = 5 [(buf.validate.field).enum.defined_only = true];
+  Date due_date = 6;
+}
+
+message GetTaskRequest {
+  int64 id = 1 [(buf.validate.field).int64.gte = 1];
+}
+
+message GetTaskResponse {
+  Task task = 1;
+}
+
+message GetTasksResponse {
+  repeated Task tasks = 1;
+}
+
+message SearchTasksRequest {
+  optional string title = 1;
+  optional int64 author_id = 2 [(buf.validate.field).int64.gte = 1];
+  optional int64 assignee_id = 3 [(buf.validate.field).int64.gte = 1];
+  optional TaskStatus status = 4 [(buf.validate.field).enum.defined_only = true];
+}
+
+message SearchTasksResponse {
+  repeated Task tasks = 1;
+}
+
+message CreateTaskRequest {
+  string title = 1;
+  int64 author_id = 2 [(buf.validate.field).int64.gte = 1];
+  int64 assignee_id = 3 [(buf.validate.field).int64.gte = 1];
+  TaskStatus status = 4 [(buf.validate.field).enum.defined_only = true];
+  Date due_date = 5;
+}
+
+message CreateTaskResponse {
+  Task task = 1;
+}
+
+message UpdateTaskRequest {
+  Task task = 1;
+}
+
+message UpdateTaskResponse {
+  Task task = 1;
+}
+
+message DeleteTaskRequest {
+  int64 id = 1 [(buf.validate.field).int64.gte = 1];
+}
