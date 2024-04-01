@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "buf/validate/validate.proto";
+
+message Date {
+  int64 year = 1 [(buf.validate.field).int64 = {
+    gte: 1,
+    lte: 9999
+  }];
+  int64 month = 2 [(buf.validate.field).int64 = {
+    gte: 1,
+    lte: 12
+  }];
+  int64 day = 3 [(buf.validate.field).int64 = {
+    gte: 1,
+    lte: 31
+  }];
+}
